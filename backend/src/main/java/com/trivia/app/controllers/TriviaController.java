@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trivia.app.models.Question;
+import com.trivia.app.models.SessionStartResponse;
 import com.trivia.app.services.TriviaService;
 
 @RestController
@@ -39,9 +40,9 @@ public class TriviaController {
         }
         
         try {
-            List<Question> triviaQuestions = triviaService.getQuestions(amount, difficulty, category, type);
+            SessionStartResponse sessionStartResponse = triviaService.startSession(amount, difficulty, category, type);
             return ResponseEntity
-                .ok(triviaQuestions);
+                .ok(sessionStartResponse);
         } catch (Exception e) {
             return ResponseEntity
                     .badRequest()

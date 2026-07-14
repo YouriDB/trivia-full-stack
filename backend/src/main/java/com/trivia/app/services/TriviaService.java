@@ -1,18 +1,28 @@
 package com.trivia.app.services;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.trivia.app.clients.OpentdbClient;
+import com.trivia.app.models.ClientAnswer;
+import com.trivia.app.models.ClientQuestion;
 import com.trivia.app.models.Question;
+import com.trivia.app.models.SessionStartResponse;
+import com.trivia.app.models.Session;
+import com.trivia.app.models.SessionEndResponse;
 
 
 @Service
 public class TriviaService {
 
-    private final String redisCacheQuestionsID = "QUESTIONS";
+    // Keys for redis cache, also added a max duration so the cache doesn't infinitely keep data stored
+    private final String questionsCachePrefix = "QUESTIONS_";
+    private final Long maxCacheTime = Duration.ofMinutes(35).toSeconds();
     
     private final OpentdbClient opentdbClient;
     private final RedisTemplate<String, Object> redisTemplate;
@@ -23,20 +33,57 @@ public class TriviaService {
         this.redisTemplate = redisTemplate;
     }
 
-    public List<Question> getQuestions(Integer amount, String difficulty, String category, String type) throws Exception {
+    public SessionStartResponse startSession(int amount, String difficulty, String category, String type) throws Exception {
+        // Get questions from API
         List<Question> questions = opentdbClient.getQuestions(amount, difficulty, category, type);
 
-        for (Question question : questions) {
-            // Check if question is already in cache
-            Question cachedQuestion = (Question)redisTemplate.opsForHash().get(redisCacheQuestionsID, question.question);
+        // Randomly generate sessionId
+        String sessionId = UUID.randomUUID().toString();
 
-            if (cachedQuestion == null) {
-                // Question not stored in cache, add to cache
-                redisTemplate.opsForHash().put(redisCacheQuestionsID, question.question, question);
-            }
+        Session session = new Session();
+        session.setSessionId(sessionId);
+        session.setQuestions(questions);
+        session.setExpirationInSeconds(maxCacheTime);
+
+        // Save the session into cache
+        redisTemplate.opsForValue().set(questionsCachePrefix + sessionId, session);
+
+        return createSessionResponse(sessionId, questions);
+    }
+
+    public SessionEndResponse endSession(String sessionId, List<ClientAnswer> clientAnswers) throws Exception {
+        // Get cached session from Redis
+        Session cachedSession = (Session) redisTemplate.opsForValue().get(questionsCachePrefix + sessionId);
+        if (cachedSession == null) {
+            throw new Exception("Client session does not exist");
         }
 
-        return questions;
+        List<Question> questions = cachedSession.getQuestions();
+
+        // Set the grading for how many questions they got correct and wrong in one go
+        SessionEndResponse sessionEndResponse = new SessionEndResponse();
+        sessionEndResponse.setGrading(questions, clientAnswers);
+
+        // After session end remove from cache
+        redisTemplate.opsForValue().getAndDelete(sessionId);
+        return sessionEndResponse;
+    }
+
+    private SessionStartResponse createSessionResponse(String sessionId, List<Question> questions) {
+        SessionStartResponse sessionResponse = new SessionStartResponse();
+        sessionResponse.setSessionId(sessionId);
+        List<ClientQuestion> clientQuestions = new ArrayList<>();
+
+        // Parse each question into the client question format
+        for (Question question : questions) {
+            ClientQuestion clientQuestion = new ClientQuestion();
+            clientQuestion.setQuestion(question.question);
+            clientQuestion.setAnswers(question.correctAnswer, question.incorrectAnswers);
+            clientQuestions.add(clientQuestion);
+        }
+
+        sessionResponse.setQuestions(clientQuestions);
+        return sessionResponse;
     }
         
 }
