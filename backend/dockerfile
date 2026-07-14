@@ -1,0 +1,27 @@
+# --- Setup Build Environment ---
+FROM eclipse-temurin:17-jdk-focal AS build
+WORKDIR /app
+
+# Copy over maven wrapper and pom to image
+COPY mvnw pom.xml ./
+COPY .mvn .mvn
+
+# Resolve project dependencies
+RUN chmod +x mvnw &&./mvnw dependency:go-offline
+
+# Copy and compile source
+COPY src ./src
+RUN ./mvnw clean package -DskipTests
+
+# --- Setup Run Environment ---
+FROM eclipse-temurin:17-jdk-focal
+WORKDIR /app
+
+# Get the executable from the build environment
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose port 8080
+EXPOSE 8080
+
+# Run the application
+ENTRYPOINT [ "java", "-jar", "app.jar" ]

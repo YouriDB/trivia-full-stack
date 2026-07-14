@@ -43,7 +43,6 @@ public class TriviaController {
             return ResponseEntity
                 .ok(triviaQuestions);
         } catch (Exception e) {
-            System.err.println("Bad Request from opentdb with exception: " + e.getMessage());
             return ResponseEntity
                     .badRequest()
                     .body(e.getMessage());

@@ -3,8 +3,6 @@ package com.trivia.app.clients;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -12,7 +10,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.trivia.app.models.Question;
 
-import reactor.core.publisher.Mono;
 
 /**
  * TriviaResponse object to parse json response into,
@@ -74,13 +71,13 @@ public class OpentdbClient {
 
         URI uri = builder.build().toUri();
 
-        TriviaResponse triviaResponse = webClient
+        // GET request to API, will propogate exception.
+        return webClient
                 .get()
                 .uri(uri.toString())
                 .retrieve()
                 .bodyToMono(TriviaResponse.class)
-                .block();
-        
-        return triviaResponse.questions;
+                .block()
+                .questions;
     }
 }
