@@ -9,6 +9,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.trivia.app.clients.OpentdbClient;
+import com.trivia.app.enums.QuestionCategory;
+import com.trivia.app.enums.QuestionDifficulty;
+import com.trivia.app.enums.QuestionType;
 import com.trivia.app.models.ClientAnswer;
 import com.trivia.app.models.ClientQuestion;
 import com.trivia.app.models.Question;
@@ -45,13 +48,23 @@ public class TriviaService {
      * @return SessionStartResponse including the session Id and requested questions
      * @throws Exception when opentdb client throws an exception
      */
-    public SessionStartResponse startSession(int amount, String difficulty, String category, String type) throws Exception {
+    public SessionStartResponse startSession(
+            int amount, 
+            QuestionDifficulty difficulty, 
+            QuestionCategory category, 
+            QuestionType type
+        ) throws Exception {
+        if (amount < 0 || amount > 50) {
+            throw new IllegalArgumentException("Amount must be in the range 1 to 50.");
+        }
+
         // Get questions from API
         List<Question> questions = opentdbClient.getQuestions(amount, difficulty, category, type);
 
         // Randomly generate sessionId
         String sessionId = UUID.randomUUID().toString();
 
+        // Create new session to cache
         Session session = new Session();
         session.setSessionId(sessionId);
         session.setQuestions(questions);

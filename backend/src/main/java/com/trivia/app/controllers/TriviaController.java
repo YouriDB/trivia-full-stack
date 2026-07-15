@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trivia.app.enums.*;
 import com.trivia.app.models.ClientAnswer;
 import com.trivia.app.models.SessionEndResponse;
 import com.trivia.app.models.SessionStartResponse;
@@ -27,10 +28,10 @@ public class TriviaController {
     // this means we don't have to try/catch to parse enums from strings
     @GetMapping("/questions")
     public ResponseEntity<?> getQuestions(
-        @RequestParam(required = true) Integer amount,
-        @RequestParam(required = false) String difficulty,
-        @RequestParam(required = false) String type,
-        @RequestParam(required = false) String category
+        @RequestParam(required = true) int amount,
+        @RequestParam(required = false) QuestionDifficulty difficulty,
+        @RequestParam(required = false) QuestionType type,
+        @RequestParam(required = false) QuestionCategory category
     ) {
         // The opentdb API we use limits the number of questions to <=50 and must have at least 1 question
         if (amount < 1 || amount > 50) {

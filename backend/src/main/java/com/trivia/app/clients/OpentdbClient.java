@@ -8,6 +8,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.trivia.app.enums.QuestionCategory;
+import com.trivia.app.enums.QuestionDifficulty;
+import com.trivia.app.enums.QuestionType;
 import com.trivia.app.models.Question;
 
 
@@ -40,13 +43,18 @@ public class OpentdbClient {
      * Retrieve questions from the opentdb API using all available params.
      * 
      * @param amount Amount of questions to retrieve.
-     * @param difficulty Difficulty level of each question, default is all difficulties.
-     * @param category Category of each question, default is all categories.
-     * @param type Type of questions either boolean or multiple choice, default is both types.
+     * @param difficulty Difficulty level of each question, default is all difficulties when null.
+     * @param category Category of each question, default is all categories when null.
+     * @param type Type of questions either boolean or multiple choice, default is both types when null.
      * @return Returns a list of questions including the correct and wrong answers.
      * @throws Exception when amount is incorrect or the query fails.
      */
-    public List<Question> getQuestions(int amount, String difficulty, String category, String type) throws Exception {
+    public List<Question> getQuestions(
+        int amount, 
+        QuestionDifficulty difficulty, 
+        QuestionCategory category, 
+        QuestionType type) 
+    throws Exception {
         // If any precondition doesn't hold true, throw Illegal Argument.
         if (amount < 0 || amount > 50) {
             throw new IllegalArgumentException("Amount must be in the range 1 to 50.");
@@ -58,15 +66,15 @@ public class OpentdbClient {
                 .queryParam("amount", amount);
 
         if (difficulty != null) {
-            builder.queryParam("difficulty", difficulty);
+            builder.queryParam("difficulty", difficulty.value());
         }
 
         if (category != null) {
-            builder.queryParam("category", category);
+            builder.queryParam("category", category.value());
         }
 
         if (type != null) {
-            builder.queryParam("type", type);
+            builder.queryParam("type", type.value());
         }
 
         URI uri = builder.build().toUri();
