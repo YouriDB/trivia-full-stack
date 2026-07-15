@@ -7,7 +7,8 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
 /**
- * QuizSession
+ * Session used to save into Redis cache to later retrieve the client's session questions
+ * default set TTL to 60 seconds if no expirationInSeconds is given.
  */
 @RedisHash(timeToLive =  60L)
 public class Session implements Serializable {

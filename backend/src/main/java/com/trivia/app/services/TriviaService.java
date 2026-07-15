@@ -33,6 +33,18 @@ public class TriviaService {
         this.redisTemplate = redisTemplate;
     }
 
+    /**
+     * This function requests questions from the opentdb API,
+     * parses them into a response object to return to the client,
+     * and stores it into the Redis cache to be retrieved later.
+     * 
+     * @param amount amount of questions to start the session with.
+     * @param difficulty difficulty of the questions, default is any for each question
+     * @param category category of the questions, default is any for each question
+     * @param type type of the questions, default is any for each question
+     * @return SessionStartResponse including the session Id and requested questions
+     * @throws Exception when opentdb client throws an exception
+     */
     public SessionStartResponse startSession(int amount, String difficulty, String category, String type) throws Exception {
         // Get questions from API
         List<Question> questions = opentdbClient.getQuestions(amount, difficulty, category, type);
@@ -51,6 +63,15 @@ public class TriviaService {
         return createSessionResponse(sessionId, questions);
     }
 
+    /**
+     * Retrieves the session from the Redis cache using sessionId and checks corresponding
+     * clientAnswers with the correct answers.
+     * 
+     * @param sessionId sessionId used to retrieve the correct answers from cache
+     * @param clientAnswers client question answers to compare with the correct answers
+     * @return SessionEndResponse to return the grading of the answers to the client
+     * @throws Exception when the cached session does not exist
+     */
     public SessionEndResponse endSession(String sessionId, List<ClientAnswer> clientAnswers) throws Exception {
         // Get cached session from Redis
         Session cachedSession = (Session) redisTemplate.opsForValue().get(questionsCachePrefix + sessionId);

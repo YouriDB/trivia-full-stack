@@ -2,6 +2,9 @@ package com.trivia.app.models;
 
 import java.io.Serializable;
 
+/**
+ * ClientAnswer will hold the data the client sends when submitting their answers to the questions.
+ */
 public class ClientAnswer implements Serializable {
 
     private String question;    

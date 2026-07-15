@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ClientQuestion will be sent to the client to hide the correct/incorrect answers.
+ */
 public class ClientQuestion implements Serializable {
     
     private String question;

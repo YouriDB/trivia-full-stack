@@ -3,6 +3,10 @@ package com.trivia.app.models;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * SessionStartResponse will return to the client to use the sessionId for checking answers in the future
+ * and to display the questions onto the front-end.
+ */
 public class SessionStartResponse implements Serializable {
 
     private String sessionId;

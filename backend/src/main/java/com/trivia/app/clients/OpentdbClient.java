@@ -44,7 +44,7 @@ public class OpentdbClient {
      * @param category Category of each question, default is all categories.
      * @param type Type of questions either boolean or multiple choice, default is both types.
      * @return Returns a list of questions including the correct and wrong answers.
-     * @throws Exception if amount is incorrect or the query fails.
+     * @throws Exception when amount is incorrect or the query fails.
      */
     public List<Question> getQuestions(int amount, String difficulty, String category, String type) throws Exception {
         // If any precondition doesn't hold true, throw Illegal Argument.

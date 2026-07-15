@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Question object to store the questions received from the opentdb API.
+ */
 public class Question implements Serializable {
     
     @JsonProperty("type")
