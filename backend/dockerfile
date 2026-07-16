@@ -1,5 +1,5 @@
-# --- Setup Build Environment ---
-FROM eclipse-temurin:17-jdk-focal AS build
+# --- Setup Testing Environment ---
+FROM eclipse-temurin:17-jdk-focal AS test
 WORKDIR /app
 
 # Copy over maven wrapper and pom to image
@@ -11,6 +11,11 @@ RUN chmod +x mvnw &&./mvnw dependency:go-offline
 
 # Copy and compile source
 COPY src ./src
+
+CMD ["./mvnw", "test"]
+
+# --- Setup Build Environment ---
+FROM test as build
 RUN ./mvnw clean package -DskipTests
 
 # --- Setup Run Environment ---

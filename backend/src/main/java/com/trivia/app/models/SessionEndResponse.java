@@ -36,7 +36,7 @@ public class SessionEndResponse implements Serializable {
             }
 
             // Check whether the answer was correct with the hashtable
-            boolean answerCorrect = (correctAnswerMap.get(answer.getQuestion()) == answer.getAnswer());
+            boolean answerCorrect = (correctAnswerMap.get(answer.getQuestion()).equals(answer.getAnswer()));
             grading.put(answer.getQuestion(), answerCorrect);
         }
         

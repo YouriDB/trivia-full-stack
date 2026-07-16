@@ -1,3 +1,9 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "cucumberautocomplete.steps": [
+        "src/test/java/com/trivia/app/steps/**/*.java"
+    ],
+    "cucumberautocomplete.syncfeatures": "src/test/resources/features/**/*.feature",
+    "cucumberautocomplete.strictGherkinCompletion": true,
+    "java.compile.nullAnalysis.mode": "automatic"
 }

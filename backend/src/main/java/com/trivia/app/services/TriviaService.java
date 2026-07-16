@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.trivia.app.cache.CacheHelper;
 import com.trivia.app.clients.OpentdbClient;
 import com.trivia.app.enums.QuestionCategory;
 import com.trivia.app.enums.QuestionDifficulty;
@@ -24,16 +25,15 @@ import com.trivia.app.models.SessionEndResponse;
 public class TriviaService {
 
     // Keys for redis cache, also added a max duration so the cache doesn't infinitely keep data stored
-    private final String questionsCachePrefix = "QUESTIONS_";
     private final Long maxCacheTime = Duration.ofMinutes(35).toSeconds();
     
+    private final CacheHelper cacheHelper;
     private final OpentdbClient opentdbClient;
-    private final RedisTemplate<String, Object> redisTemplate;
 
     // Spring Boot doet automatisch de dependency injecten omdat OpentdbClient een @Component is
-    public TriviaService(OpentdbClient opentdbClient, RedisTemplate<String, Object> redisTemplate) {
+    public TriviaService(CacheHelper cacheHelper, OpentdbClient opentdbClient) {
+        this.cacheHelper = cacheHelper;
         this.opentdbClient = opentdbClient;
-        this.redisTemplate = redisTemplate;
     }
 
     /**
@@ -71,7 +71,7 @@ public class TriviaService {
         session.setExpirationInSeconds(maxCacheTime);
 
         // Save the session into cache
-        redisTemplate.opsForValue().set(questionsCachePrefix + sessionId, session);
+        cacheHelper.storeSession(sessionId, session);
 
         return createSessionResponse(sessionId, questions);
     }
@@ -87,7 +87,7 @@ public class TriviaService {
      */
     public SessionEndResponse endSession(String sessionId, List<ClientAnswer> clientAnswers) throws Exception {
         // Get cached session from Redis
-        Session cachedSession = (Session) redisTemplate.opsForValue().get(questionsCachePrefix + sessionId);
+        Session cachedSession = cacheHelper.getSession(sessionId);
         if (cachedSession == null) {
             throw new Exception("Client session does not exist");
         }
@@ -99,7 +99,7 @@ public class TriviaService {
         sessionEndResponse.setGrading(questions, clientAnswers);
 
         // After session end remove from cache
-        redisTemplate.opsForValue().getAndDelete(sessionId);
+        cacheHelper.deleteSession(sessionId);
         return sessionEndResponse;
     }
 
