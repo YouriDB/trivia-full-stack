@@ -1,9 +1,9 @@
 'use client';
 
-import { redirect } from "next/navigation";
 import { useState } from "react";
 import Spinner from "./spinner";
 import { getQuestions } from "@/lib/triviaFetchHelper";
+import { redirect } from "next/navigation";
 
 export default function StartButton() {
 
@@ -12,11 +12,12 @@ export default function StartButton() {
 
     async function handleStart() {
         setLoading(true);
-        let data = await getQuestions();
+        let questions = await getQuestions();
+        
+        sessionStorage.setItem("clientQuestions", JSON.stringify(questions));
 
-
-        //setLoading(false);
-        redirect("/quiz");
+        setLoading(false);
+        redirect("/quiz")
     }
     
     return (

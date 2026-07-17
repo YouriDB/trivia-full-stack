@@ -15,7 +15,6 @@ export default function RootLayout({
                 <div className="flex flex-col">
                     <StartButton />
                     <QuizSettings />
-                    
                 </div>
             </div>
             {children}

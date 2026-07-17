@@ -1,6 +1,6 @@
 import Header from "@/components/layout/header";
 
-export default function QuizLayout({
+export default function ResultsLayout({
   children,
 }: {
   children: React.ReactNode;
