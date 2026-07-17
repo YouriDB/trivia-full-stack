@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { useState } from "react";
 import Spinner from "./spinner";
+import { getQuestions } from "@/lib/triviaFetchHelper";
 
 export default function StartButton() {
 
@@ -11,7 +12,7 @@ export default function StartButton() {
 
     async function handleStart() {
         setLoading(true);
-        let data = await fetch("/api/questions");
+        let data = await getQuestions();
 
 
         //setLoading(false);
@@ -30,8 +31,8 @@ export default function StartButton() {
                 </>
             }
             {
-                !isLoading && 
-                <button disabled={isLoading} 
+                !isLoading &&
+                <button disabled={isLoading}
                     onClick={handleStart} 
                     className="rounded-xl bg-indigo-600 px-9 py-6 font-semibold text-white shadow-md transition hover:bg-indigo-700 hover:shadow-lg text-3xl cursor-pointer">
                     Start Quiz
