@@ -11,13 +11,22 @@ import java.util.Map;
  */
 public class SessionEndResponse implements Serializable {
     
+    private List<Question> questions;
     private Map<String, Boolean> grading;
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+    }
 
     public Map<String, Boolean> getGrading() {
         return grading;
     }
 
-    public void setGrading(List<Question> questions, List<ClientAnswer> answers) {
+    public void generateGrading(List<ClientAnswer> answers) {
         grading = new Hashtable<>();
 
         Map<String, String> correctAnswerMap  = new Hashtable<>();

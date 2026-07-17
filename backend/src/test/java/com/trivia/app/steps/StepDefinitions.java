@@ -5,10 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -20,11 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.trivia.app.cache.CacheHelper;
-import com.trivia.app.clients.OpentdbClient;
 import com.trivia.app.mocking.OpentdbClientMock;
 import com.trivia.app.models.ClientAnswer;
 import com.trivia.app.models.ClientQuestion;
-import com.trivia.app.models.Question;
 import com.trivia.app.models.Session;
 import com.trivia.app.models.SessionEndResponse;
 import com.trivia.app.models.SessionStartResponse;

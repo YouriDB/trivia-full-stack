@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.trivia.app.cache.CacheHelper;
@@ -96,7 +95,8 @@ public class TriviaService {
 
         // Set the grading for how many questions they got correct and wrong in one go
         SessionEndResponse sessionEndResponse = new SessionEndResponse();
-        sessionEndResponse.setGrading(questions, clientAnswers);
+        sessionEndResponse.setQuestions(questions);
+        sessionEndResponse.generateGrading(clientAnswers);
 
         // After session end remove from cache
         cacheHelper.deleteSession(sessionId);

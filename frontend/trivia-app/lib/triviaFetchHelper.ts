@@ -31,7 +31,7 @@ export async function getQuestions(): Promise<ClientQuestion[]> {
   }); 
 }
 
-export async function checkAnswers(ClientAnswers: ClientAnswer[]): Promise<Map<string, boolean>> {
+export async function checkAnswers(ClientAnswers: ClientAnswer[]): Promise<SessionEndResponse> {
 
     return await fetch(`${apiUrl}/checkanswers?sessionId=${localStorage.getItem("sessionId")}`, {
         method: "post",
@@ -44,8 +44,7 @@ export async function checkAnswers(ClientAnswers: ClientAnswer[]): Promise<Map<s
         return response.json()
     })
     .then((data) => {
-        var sessionStartResponse = data as SessionEndResponse;
-        return new Map(Object.entries(sessionStartResponse.grading));
+        return data as SessionEndResponse;
     })
     .catch((err) => {
         if (err.status === 400) {
