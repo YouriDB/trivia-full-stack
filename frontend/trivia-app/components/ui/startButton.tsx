@@ -4,15 +4,38 @@ import { useState } from "react";
 import Spinner from "./spinner";
 import { getQuestions } from "@/lib/triviaFetchHelper";
 import { redirect } from "next/navigation";
+import QuizSettings from "./quizSettings";
 
 export default function StartButton() {
 
     const [isLoading, setLoading] = useState<boolean>(false);
+
+    const [amount, setAmount] = useState<number>(10);
+    const [type, setType] = useState<string>("");
+    const [category, setCategory] = useState<string>("");
+    const [difficulty, setDifficulty] = useState<string>("");
+    
+    function quizSettingsChanged(label: string, value: string) {
+        switch(label) {
+            case "Amount":
+                setAmount(parseInt(value));
+                break;
+            case "Type":
+                setType(value);
+                break;
+            case "Category":
+                setCategory(value)
+                break;
+            case "Difficulty":
+                setDifficulty(value);
+                break;
+        }
+    }
     
 
     async function handleStart() {
         setLoading(true);
-        let questions = await getQuestions();
+        let questions = await getQuestions(amount, type, difficulty, category);
         
         sessionStorage.setItem("clientQuestions", JSON.stringify(questions));
 
@@ -39,7 +62,7 @@ export default function StartButton() {
                     Start Quiz
                 </button>
             }
-            
+            <QuizSettings dropdownValueChanged={quizSettingsChanged}/>
         </>
         
     )

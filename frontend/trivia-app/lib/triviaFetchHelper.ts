@@ -7,29 +7,34 @@ import { Question } from "@/models/Question";
 
 const apiUrl = process.env.API_URL;
 
-export async function getQuestions(): Promise<ClientQuestion[]> {
-  return await fetch(`${apiUrl}/questions?amount=3`, {
-    method: "get",
-    headers: {
-        "Content-Type": "application/json",
-    }
-  })
-  .then((response) =>  {
-    return response.json()
-  })
-  .then((data) => {
-    var sessionStartResponse = data as SessionStartResponse;
-    localStorage.setItem("sessionId", sessionStartResponse.sessionId);
-    return sessionStartResponse.questions;
-  })
-  .catch((err) => {
-    if (err.status === 400) {
-        // Handle later
-        throw new Error("Unexpected API status: " + err.body);
-    } else {
-        throw new Error("Unexpected API status: " + err.body);
-    }
-  }); 
+export async function getQuestions(amount: number, type: string, difficulty: string, category: string): Promise<ClientQuestion[]> {
+    let typePath: string = (type == "") ? "" : `&type=${type}` ;
+    let difficultyPath: string = (difficulty == "") ? "" : `&difficulty=${difficulty}` ;
+    let categoryPath: string = (category == "") ? "" : `&category=${category}` ;
+    let path: string = `/questions?amount=${amount}${typePath}${difficultyPath}${categoryPath}`;
+
+    return await fetch(`${apiUrl}${path}`, {
+        method: "get",
+        headers: {
+            "Content-Type": "application/json",
+        }
+    })
+    .then((response) =>  {
+        return response.json()
+    })
+    .then((data) => {
+        var sessionStartResponse = data as SessionStartResponse;
+        localStorage.setItem("sessionId", sessionStartResponse.sessionId);
+        return sessionStartResponse.questions;
+    })
+    .catch((err) => {
+        if (err.status === 400) {
+            // Handle later
+            throw new Error("Unexpected API status: " + err.body);
+        } else {
+            throw new Error("Unexpected API status: " + err.body);
+        }
+    }); 
 }
 
 export async function checkAnswers(ClientAnswers: ClientAnswer[]): Promise<SessionEndResponse> {

@@ -1,3 +1,4 @@
+import AmountInput from "./amountInput";
 import Dropdown from "./dropdown"
 
 const difficulties = [
@@ -41,12 +42,35 @@ const categories = [
     { label: "Entertainment Cartoon & Animations", value: "EntertainmentCartoonAndAnimations" },
 ]
 
-export default function QuizSettings() {
+export default function QuizSettings({
+    dropdownValueChanged
+}: {
+    dropdownValueChanged: (label: string, value: string) => void;
+}) {
     return (
-        <div className="flex gap-6 p-4">
-            <Dropdown label="Difficulty" items={difficulties} />
-            <Dropdown label="Type" items={types}/>
-            <Dropdown label="Category" items={categories}/>
-        </div>
+        <>
+            <div className="flex gap-6 p-4 field-sizing-content">  
+                <AmountInput 
+                    quizSettingsChanged={dropdownValueChanged}
+                />
+            </div>
+            <div className="flex gap-6 p-4">
+                <Dropdown 
+                    label="Difficulty" 
+                    items={difficulties}
+                    optionClicked={dropdownValueChanged}                
+                />
+                <Dropdown 
+                    label="Type" 
+                    items={types}
+                    optionClicked={dropdownValueChanged}   
+                />
+                <Dropdown 
+                    label="Category" 
+                    items={categories}
+                    optionClicked={dropdownValueChanged}   
+                />
+            </div>
+        </>
     )
 }
