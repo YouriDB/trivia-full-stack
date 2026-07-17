@@ -3,6 +3,7 @@ import { ClientQuestion } from "@/models/ClientQuestion";
 import { SessionStartResponse } from "../models/SessionStartResponse"
 import { ClientAnswer } from "@/models/ClientAnswer";
 import { SessionEndResponse } from "@/models/SessionEndResponse";
+import { Question } from "@/models/Question";
 
 const apiUrl = process.env.API_URL;
 
@@ -44,7 +45,17 @@ export async function checkAnswers(ClientAnswers: ClientAnswer[]): Promise<Sessi
         return response.json()
     })
     .then((data) => {
-        return data as SessionEndResponse;
+        let unparsedData = data as {
+            questions: Question[];
+            grading: Record<string, boolean>;
+        };
+
+        const sessionEndResponse: SessionEndResponse = {
+            questions: unparsedData.questions,
+            grading: new Map(Object.entries(unparsedData.grading))
+        }
+
+        return sessionEndResponse;
     })
     .catch((err) => {
         if (err.status === 400) {

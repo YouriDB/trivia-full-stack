@@ -20,9 +20,9 @@ export default function QuestionCard({
           <button
             key={index}
             onClick={() => onAnswerSelect?.(question, answer)}
-            className="rounded-xl border border-slate-200 bg-white px-5 py-4 text-left font-medium text-slate-700 transition hover:border-indigo-500 hover:bg-indigo-50"
+            className="rounded-xl border border-slate-200 bg-white px-5 py-4 text-left font-medium text-slate-700 transition hover:border-indigo-500 hover:bg-indigo-50 cursor-pointer"
           >
-            {answer}
+            {decodeHtml(answer)}
           </button>
         ))}
       </div>

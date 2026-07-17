@@ -24,9 +24,10 @@ export default function ResultsPage() {
                 setSessionEndResponse(sessionEndResponse);
             })
             .catch((err) => {
-                console.error("Failed to check answers", err);
+                console.error("Failed to check answers: ", err);
             });
              
+            
         }
     }, []);
 
@@ -46,7 +47,12 @@ export default function ResultsPage() {
     }
 
     function aggregateAnswers(correctAnswer: string, incorrectAnswers: string[]): string[] {
-        return [correctAnswer, ...incorrectAnswers];
+        let aggregatedAnswers: string[] = [];
+        aggregatedAnswers.push(correctAnswer);
+        incorrectAnswers.forEach(incorrectAnswer => {
+            aggregatedAnswers.push(incorrectAnswer);
+        });
+        return aggregatedAnswers;
     }
 
     return (
@@ -54,13 +60,14 @@ export default function ResultsPage() {
             {!sessionEndResponse && 
                 <Spinner />
             }
-            {sessionEndResponse &&
+            {sessionEndResponse && sessionEndResponse.questions[index] &&
                 
                 <AnswerCard 
                     question={sessionEndResponse.questions[index].question}
-                    answers={aggregateAnswers(sessionEndResponse.questions[index].correctAnswer, sessionEndResponse.questions[index].incorrectAnswers)}
+                    answers={aggregateAnswers(sessionEndResponse.questions[index].correct_answer, sessionEndResponse.questions[index].incorrect_answers)}
                     grading={sessionEndResponse.grading.get(sessionEndResponse.questions[index].question) ?? false}
-                    correctAnswer={sessionEndResponse.questions[index].correctAnswer}
+                    correctAnswer={sessionEndResponse.questions[index].correct_answer}
+                    lastQuestion={index + 1 == sessionEndResponse.questions.length}
                     onNextClick={handleNextClicked}
                 />
             }

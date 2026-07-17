@@ -5,12 +5,14 @@ export default function AnswerCard({
   grading,
   answers,
   correctAnswer,
+  lastQuestion,
   onNextClick
 }: {
   question: string;
   grading: boolean;
   answers: string[];
   correctAnswer: string;
+  lastQuestion: boolean;
   onNextClick?: () => void;
 }) {
   return (
@@ -23,16 +25,17 @@ export default function AnswerCard({
           {answers.slice(0, 4).map((answer, index) => (
             <button
               key={index}
-              className="rounded-xl border border-slate-200 bg-gray px-5 py-4 text-left font-medium text-slate-700 transition hover:border-indigo-500 hover:bg-indigo-50 disabled"
+              className={"rounded-xl border-2 bg-gray-200 px-5 py-4 text-left font-medium text-slate-700 transition disabled " + (answer == correctAnswer ? "border-green-500" : "border-red-500")}
             >
-              {answer}
+              {decodeHtml(answer)}
             </button>
           ))}
           <button
+            key="4"
             onClick={() => onNextClick?.()}
-            className="rounded-xl border border-slate-200 bg-white px-5 py-4 text-left font-medium text-slate-700 transition hover:border-indigo-500 hover:bg-indigo-50"
+            className="rounded-xl border border-slate-200 bg-white px-5 py-4 text-left font-medium text-slate-700 transition hover:border-indigo-500 hover:bg-indigo-50 cursor-pointer"
           >
-            Next
+            {(!lastQuestion) ? "Next" : "End Quiz"}
           </button>
       </div>
     </div>
